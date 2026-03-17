@@ -2,6 +2,10 @@
 // ... 你的文件头省略 ...
 /* USER CODE END Header */
 
+/* USER CODE BEGIN 1 */
+
+/* USER CODE END 1 */
+
 /* Includes ------------------------------------------------------------------*/
 #include "app_threadx.h"
 
@@ -9,6 +13,8 @@
 /* USER CODE BEGIN Includes */
 #include "main.h"   // 必须包含！为了使用 HAL_GPIO_TogglePin
 #include <stdio.h>  // 必须包含！为了使用 printf
+
+extern TIM_HandleTypeDef htim5;
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,6 +55,10 @@ void My_LED_Thread_Entry(ULONG thread_input);
 UINT App_ThreadX_Init(VOID *memory_ptr)
 {
   UINT ret = TX_SUCCESS;
+  /* USER CODE BEGIN App_ThreadX_MEM_POOL */
+
+  /* USER CODE END App_ThreadX_MEM_POOL */
+
   /* USER CODE BEGIN App_ThreadX_Init */
 
   /* 4. 创建并启动线程 */
@@ -79,7 +89,7 @@ void MX_ThreadX_Init(void)
 
   /* USER CODE END  Before_Kernel_Start */
 
-  tx_kernel_enter(); // 一旦执行这句，系统就被 ThreadX 接管了
+  tx_kernel_enter();
 
   /* USER CODE BEGIN  Kernel_Start_Error */
 
@@ -90,21 +100,40 @@ void MX_ThreadX_Init(void)
 /* 5. 真正干活的地方！也就是你的“多任务版 while(1)” */
 void My_LED_Thread_Entry(ULONG thread_input)
 {
-    /* 强行避免编译器报 "变量未使用" 的警告 */
-    (void)thread_input;
+    (void)thread_input; 
 
-    /* 这个 while(1) 只属于这个线程，不会卡死别的线程 */
+    /* 启动 TIM5 的 Channel 1 的 PWM 输出 */
+    HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1);
+    
+    printf("Servo Thread Started!\r\n");
+
     while(1)
     {
-        /* 翻转 PC13 蓝灯 */
-        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+        /* 转到 0度 (脉宽 500us) */
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 500);
+        printf("Position: 0 deg\r\n");
+        tx_thread_sleep(1000); /* 停顿 1 秒 (假设1个Tick=1ms) */
 
-        /* 串口打印 */
-        printf("ThreadX is running! LED Toggled jojo chao .\r\n");
+        /* 转到 90度 (脉宽 1500us) */
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 1500);
+        printf("Position: 90 deg\r\n");
+        tx_thread_sleep(1000);
 
-        /* ThreadX 专属休眠函数：休眠 100 个系统心跳 (Ticks) */
-        /* 如果你的系统心跳默认是 1000Hz(1ms)，那这里就是 100ms */
-        tx_thread_sleep(100);
+        /* 转到 180度 (脉宽 2500us) */
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 2500);
+        printf("Position: 180 deg\r\n");
+        tx_thread_sleep(1000);
+        
+        /* 转回 90度 (脉宽 1500us) */
+        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 1500);
+        printf("Position: 90 deg\r\n");
+        tx_thread_sleep(1000);
     }
 }
+
+/*
+
+*/
+
+
 /* USER CODE END 2 */

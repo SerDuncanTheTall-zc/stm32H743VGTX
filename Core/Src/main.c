@@ -21,6 +21,7 @@
 #include "app_threadx.h"
 #include "main.h"
 #include "rtc.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -107,6 +108,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   MX_RTC_Init();
+  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
