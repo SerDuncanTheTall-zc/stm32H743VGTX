@@ -107,28 +107,28 @@ void My_LED_Thread_Entry(ULONG thread_input)
     
     printf("Servo Thread Started!\r\n");
 
-    while(1)
-    {
-        /* 转到 0度 (脉宽 500us) */
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 500);
-        printf("Position: 0 deg\r\n");
-        tx_thread_sleep(1000); /* 停顿 1 秒 (假设1个Tick=1ms) */
+    // while(1)
+    // {
+    //     /* 转到 0度 (脉宽 500us) */
+    //     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 500);
+    //     printf("Position: 0 deg\r\n");
+    //     tx_thread_sleep(1000); /* 停顿 1 秒 (假设1个Tick=1ms) */
 
-        /* 转到 90度 (脉宽 1500us) */
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 1500);
-        printf("Position: 90 deg\r\n");
-        tx_thread_sleep(1000);
+    //     /* 转到 90度 (脉宽 1500us) */
+    //     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 1500);
+    //     printf("Position: 90 deg\r\n");
+    //     tx_thread_sleep(1000);
 
-        /* 转到 180度 (脉宽 2500us) */
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 2500);
-        printf("Position: 180 deg\r\n");
-        tx_thread_sleep(1000);
+    //     /* 转到 180度 (脉宽 2500us) */
+    //     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 2500);
+    //     printf("Position: 180 deg\r\n");
+    //     tx_thread_sleep(1000);
         
-        /* 转回 90度 (脉宽 1500us) */
-        __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 1500);
-        printf("Position: 90 deg\r\n");
-        tx_thread_sleep(1000);
-    }
+    //     /* 转回 90度 (脉宽 1500us) */
+    //     __HAL_TIM_SET_COMPARE(&htim5, TIM_CHANNEL_1, 1500);
+    //     printf("Position: 90 deg\r\n");
+    //     tx_thread_sleep(1000);
+    // }
 }
 
 /*
