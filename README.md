@@ -21,8 +21,11 @@ Ultrasonic scanning (radar-like) obstacle avoidance system
 git clone -b driver/sg90-hcsr04 --single-branch https://github.com/SerDuncanTheTall-zc/stm32H743VGTX.git
 ```
 
-🎥 Demo Video:
+🎥 youtube Video:
 https://youtu.be/yUmKvmhgVbc?si=SUmeEauqsGHOwMXn
+
+🎥 Video: Bilibili
+https://www.bilibili.com/video/BV14YAEzWEvY/
 
 ---
 
