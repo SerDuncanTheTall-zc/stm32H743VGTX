@@ -24,6 +24,8 @@ git clone -b driver/sg90-hcsr04 --single-branch https://github.com/SerDuncanTheT
 🎥 Demo Video:
 https://youtu.be/yUmKvmhgVbc?si=SUmeEauqsGHOwMXn
 
+🎥 Demo Video bilibili:
+https://www.bilibili.com/video/BV14YAEzWEvY/?share_source=copy_web&vd_source=815e6eee695146b5ee790ba40fc06ef6
 ---
 
 ## 📷 Hardware Setup
