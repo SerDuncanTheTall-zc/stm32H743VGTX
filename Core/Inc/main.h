@@ -61,6 +61,10 @@ void Error_Handler(void);
 #define Trig_GPIO_Port GPIOC
 #define Echo_Pin GPIO_PIN_3
 #define Echo_GPIO_Port GPIOC
+#define OV5640_RESET_Pin GPIO_PIN_4
+#define OV5640_RESET_GPIO_Port GPIOC
+#define OV5640_PWDN_Pin GPIO_PIN_14
+#define OV5640_PWDN_GPIO_Port GPIOD
 
 /* USER CODE BEGIN Private defines */
 
