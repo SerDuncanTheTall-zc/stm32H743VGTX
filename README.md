@@ -1,2 +1,56 @@
-# stm32H743VGTX
-stm32Project embedded develop
+# STM32H743VGTX Projects
+
+This repository contains multiple embedded projects based on the STM32H743 platform.
+
+Each feature is developed and maintained in its own branch.
+
+---
+
+## 📦 Available Branches
+
+### 🔧 driver/sg90-hcsr04
+
+Ultrasonic scanning (radar-like) obstacle avoidance system
+
+* SG90 Servo Motor
+* HC-SR04 Ultrasonic Sensor
+
+📥 Clone this branch:
+
+```bash
+git clone -b driver/sg90-hcsr04 --single-branch https://github.com/SerDuncanTheTall-zc/stm32H743VGTX.git
+```
+
+🎥 Demo Video:
+https://youtu.be/yUmKvmhgVbc?si=SUmeEauqsGHOwMXn
+
+---
+
+## 📷 Hardware Setup
+
+<p align="center">
+  <img src="./doc/sg90_Ultrasonic.jpg" width="45%">
+  <img src="./doc/stm32H743VGTX.jpg" width="45%">
+</p>
+
+---
+
+## 🚀 Future Work
+
+More branches and demos will be added:
+
+* [ ] driver/xxx
+* [ ] feature/xxx
+* [ ] rtos/xxx
+
+Each branch will include:
+
+* Source code
+* Documentation
+* Demo video
+
+---
+
+## 👤 Author
+
+jojochao
