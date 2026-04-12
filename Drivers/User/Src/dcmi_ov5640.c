@@ -277,15 +277,30 @@ uint16_t OV5640_ReadID(void)
 * 函 数 名: OV5640_Config
 * 函数功能: 配置 OV5640 各个寄存器参数，并关闭闪光灯
 *****************************************************************************************************************************************/
+/**
+ * @brief       配置 OV5640 寄存器
+ * @note        在初始化循环结束后，强制关闭补光灯信号，防止硬件发烫且不干扰图像传输
+ * @param       无
+ * @retval      无
+ */
+/**
+ * @brief       配置 OV5640 寄存器
+ * @note        在执行完标准初始化后，强制关闭补光灯信号 (STROBE)
+ * 使用的 SCCB 函数必须是优化后修复了 Start 信号冲突的版本
+ */
 void OV5640_Config(void)
 {
     uint32_t i; 
     uint8_t read_reg; 
+    uint8_t temp_val;
 
+    /* 1. 执行商家提供的标准初始化序列 */
+    printf("[System] Starting OV5640 Register Configuration...\r\n");
     for(i=0; i<(sizeof(OV5640_INIT_Config)/4); i++)
     {
         SCCB_WriteReg_16Bit(OV5640_INIT_Config[i][0], OV5640_INIT_Config[i][1]); 
         
+        /* 调试用：读取校验，确保寄存器真的写进去了 */
         read_reg = SCCB_ReadReg_16Bit(OV5640_INIT_Config[i][0]);    
         if(OV5640_INIT_Config[i][1] != read_reg )   
         {
@@ -294,12 +309,27 @@ void OV5640_Config(void)
         }
     }
     
-	// 确保只关闭 Strobe (Bit 1)，绝不动 SIOD (Bit 0) 或 PCLK (在 0x3017)
-uint8_t val = SCCB_ReadReg_16Bit(0x3016);
-SCCB_WriteReg_16Bit(0x3016, val & 0xFD); // 清零 Bit 1
+    /* 2. 【核心关灯补丁】精准操作寄存器，不伤屏幕 */
+    
+    // A. 先关闭逻辑触发 (0x3B00)
+    if (SCCB_WriteReg_16Bit(0x3B00, 0x00) == SUCCESS) {
+        printf("[Light] Flash Logic Disabled.\r\n");
+    }
 
-// 同时关闭逻辑控制
-SCCB_WriteReg_16Bit(0x3B00, 0x00);
+    // B. 精准操作 0x3016 (只灭灯位 Bit 1，强保时钟位 Bit 0)
+    temp_val = SCCB_ReadReg_16Bit(0x3016);
+    // 逻辑：清零 Bit 1 (&0xFD)，置位 Bit 0 (|0x01)
+    if (SCCB_WriteReg_16Bit(0x3016, (temp_val & 0xFD) | 0x01) == SUCCESS) {
+        printf("[Light] Physical Strobe Pin Disabled. PCLK Safe.\r\n");
+    }
+
+    // C. 最狠的一招：将 STROBE 引脚设为输入/高阻态 (0x3019)
+    // 配合底板上的 10K 下拉电阻，强制让电平归零
+    if (SCCB_WriteReg_16Bit(0x3019, 0x00) == SUCCESS) {
+        printf("[Light] Pin 0x3019 set to Input (High-Z).\r\n");
+    }
+
+    printf("[System] OV5640 Config Completed.\r\n");
 }
 
 void OV5640_Set_Pixformat(uint8_t pixformat)
@@ -497,7 +527,7 @@ void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
    OV5640_FrameState = 1;  
    
    // 每次捕捉到一帧，通过串口打印，便于排查假死问题
-   printf("[DEBUG] FrameEventCallback triggered. Frame Captured!\r\n");  
+   //printf("[DEBUG] FrameEventCallback triggered. Frame Captured!\r\n");  
 }
 
 /***************************************************************************************************************************************

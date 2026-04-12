@@ -444,6 +444,11 @@
               <FileType>1</FileType>
               <FilePath>..\Drivers\User\Src\dcmi_ov5640.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_fill_light.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\User\Src\bsp_fill_light.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1018,6 +1023,11 @@
               <FileName>dcmi_ov5640.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Drivers\User\Src\dcmi_ov5640.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_fill_light.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\User\Src\bsp_fill_light.c</FilePath>
             </File>
           </Files>
         </Group>

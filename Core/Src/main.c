@@ -12,6 +12,7 @@
 #include "usart.h"
 #include "lcd_spi_154.h"
 #include "dcmi_ov5640.h"  
+#include "bsp_fill_light.h"
 #include <stdio.h>
 
 #define Camera_Buffer 0x24000000    // 摄像头图像缓冲区
@@ -35,6 +36,7 @@ int main(void)
   SystemClock_Config(); // 配置系统时钟，主频480MHz
   
   LED_Init();         // 初始化LED引脚
+  //FillLight_Init();   /* 初始化 PC4 补光灯并强行关灯 */
   USART1_Init();        // USART1初始化 
   
   printf("\r\n\r\n--- System Booting ---\r\n");
@@ -58,30 +60,25 @@ int main(void)
 
   uint32_t last_heartbeat = HAL_GetTick();
   uint32_t frame_count = 0;
+// 1. 再次通过 SCCB 关掉摄像头的灯信号 (因为固件可能重置了它)
+// 此时已经过了 AF 下载阶段
+uint8_t current_3016 = SCCB_ReadReg_16Bit(0x3016);
+SCCB_WriteReg_16Bit(0x3016, current_3016 & 0xFD); // 灭灯位，保时钟位
+SCCB_WriteReg_16Bit(0x3019, 0x00);               // 设为输入/高阻
+SCCB_WriteReg_16Bit(0x3B00, 0x00);               // 禁用逻辑
 
-// --- 加上下面这一行，告诉编译器这个变量是什么类型 ---
-// GPIO_InitTypeDef GPIO_InitStruct = {0}; 
-
-//   // 1. 开启 GPIOC 的时钟
-//   __HAL_RCC_GPIOC_CLK_ENABLE();
-
-//   // // 2. 配置 PC4 引脚参数
-//   GPIO_InitStruct.Pin = GPIO_PIN_4;
-//   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; // 推挽输出
-//   GPIO_InitStruct.Pull = GPIO_NOPULL;
-//   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-//   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  // 3. 强制拉低 PC4，熄灭补光灯
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_4, GPIO_PIN_RESET);
+// 2. 尝试在不 Init 的情况下，通过寄存器直接拉低 PC4 (防止主控端输出高)
+// 这种写法不触碰 GPIO 的配置寄存器，只操作输出寄存器，不会干扰屏幕
+__HAL_RCC_GPIOC_CLK_ENABLE();
+GPIOC->BSRR = (uint32_t)GPIO_PIN_4 << 16U; // 强制 Reset PC4
   while (1)
   {
     // --- 1. 心跳侦听：每隔 2 秒打印一次，证明 main 循环没死 ---
     if (HAL_GetTick() - last_heartbeat > 2000) 
     {
         last_heartbeat = HAL_GetTick();
-        printf("[Heartbeat] main loop running. OV5640_FrameState = %d | Total Frames = %d\r\n", 
-                OV5640_FrameState, frame_count);
+        //printf("[Heartbeat] main loop running. OV5640_FrameState = %d | Total Frames = %d\r\n", 
+          //      OV5640_FrameState, frame_count);
     }
 
     // --- 2. 图像捕获与显示处理 ---
@@ -91,7 +88,7 @@ int main(void)
         frame_count++;
         
         // 打印调试：开始处理这帧图像
-        printf(" -> Frame %d Captured! Updating LCD...\r\n", frame_count);
+        //printf(" -> Frame %d Captured! Updating LCD...\r\n", frame_count);
 
         // --- 核心修复：强制刷新 D-Cache ---
         // 确保 CPU 读到的不是缓存里的老数据，而是 DMA 刚刚写入物理内存的新数据
@@ -107,7 +104,7 @@ int main(void)
         LED1_Toggle;  
 
         // 打印调试：屏幕刷新完毕
-        printf(" -> LCD Update Done. FPS = %d\r\n", OV5640_FPS);
+        //printf(" -> LCD Update Done. FPS = %d\r\n", OV5640_FPS);
     } 
   }
 }

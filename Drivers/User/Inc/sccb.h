@@ -3,57 +3,47 @@
 
 #include "stm32h7xx_hal.h"
 
-#define OV2640_DEVICE_ADDRESS     0x60    // OV2640地址
-#define OV5640_DEVICE_ADDRESS     0X78		// OV5640地址
+/* 状态定义 */
+#ifndef SUCCESS
+#define SUCCESS      1
+#endif
+#ifndef ERROR
+#define ERROR        0
+#endif
 
-/*----------------------------------------- IIIC 引脚配置宏 -----------------------------------------------*/
+#define OV5640_DEVICE_ADDRESS     0x78
 
-#define SCCB_SCL_CLK_ENABLE       __HAL_RCC_GPIOB_CLK_ENABLE()		// SCL 引脚时钟
-#define SCCB_SCL_PORT   		   GPIOB                 				// SCL 引脚端口
-#define SCCB_SCL_PIN     		   GPIO_PIN_8 								// SCL 引脚
+/*----------------------------------------- 引脚配置宏 (PB8/PB9) -----------------------------------*/
+
+#define SCCB_SCL_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE()
+#define SCCB_SCL_PORT              GPIOB
+#define SCCB_SCL_PIN               GPIO_PIN_8
         
-#define SCCB_SDA_CLK_ENABLE       __HAL_RCC_GPIOB_CLK_ENABLE() 	// SDA 引脚时钟
-#define SCCB_SDA_PORT   			 GPIOB                   			// SDA 引脚端口
-#define SCCB_SDA_PIN    			 GPIO_PIN_9              			// SDA 引脚
+#define SCCB_SDA_CLK_ENABLE()      __HAL_RCC_GPIOB_CLK_ENABLE()
+#define SCCB_SDA_PORT              GPIOB
+#define SCCB_SDA_PIN               GPIO_PIN_9
 
-/*------------------------------------------ IIC相关定义 -------------------------------------------------*/
+/*------------------------------------------ IIC相关定义 ------------------------------------------*/
 
-#define ACK_OK  	1  			// 响应正常
-#define ACK_ERR 	0				// 响应错误
+#define SCCB_DelayVaule  500 // H7主频480MHz，初始设大点确保稳定
 
-// SCCB通信延时，SCCB_Delay()函数使用，
-//	通信速度在300KHz左右
-#define SCCB_DelayVaule  8  	
+/*-------------------------------------------- IO口操作 -------------------------------------------*/   
 
-/*-------------------------------------------- IO口操作 ---------------------------------------------------*/   
+#define SCCB_SCL(n) (n ? (SCCB_SCL_PORT->BSRR = SCCB_SCL_PIN) : (SCCB_SCL_PORT->BSRR = (uint32_t)SCCB_SCL_PIN << 16U))
+#define SCCB_SDA(n) (n ? (SCCB_SDA_PORT->BSRR = SCCB_SDA_PIN) : (SCCB_SDA_PORT->BSRR = (uint32_t)SCCB_SDA_PIN << 16U))
+#define READ_SDA    ((SCCB_SDA_PORT->IDR & SCCB_SDA_PIN) != 0)
 
-#define SCCB_SCL(a)	if (a)	\
-										HAL_GPIO_WritePin(SCCB_SCL_PORT, SCCB_SCL_PIN, GPIO_PIN_SET); \
-									else		\
-										HAL_GPIO_WritePin(SCCB_SCL_PORT, SCCB_SCL_PIN, GPIO_PIN_RESET)	
+/*------------------------------------------- 函数声明 --------------------------------------------*/               
 
-#define SCCB_SDA(a)	if (a)	\
-										HAL_GPIO_WritePin(SCCB_SDA_PORT, SCCB_SDA_PIN, GPIO_PIN_SET); \
-									else		\
-										HAL_GPIO_WritePin(SCCB_SDA_PORT, SCCB_SDA_PIN, GPIO_PIN_RESET)		
+void    SCCB_GPIO_Config(void);
+void    SCCB_Start(void);
+void    SCCB_Stop(void);
+uint8_t SCCB_WriteByte(uint8_t data);
+uint8_t SCCB_ReadByte(void);
+void    SCCB_NoACK(void);
 
-/*--------------------------------------------- 函数声明 --------------------------------------------------*/  		
-					
-void 		SCCB_GPIO_Config (void);				// IIC引脚初始化
-void 		SCCB_Delay(uint32_t a);					// IIC延时函数						
-void 		SCCB_Start(void);							// 启动IIC通信
-void 		SCCB_Stop(void);							// IIC停止信号
-void 		SCCB_ACK(void);							//	发送响应信号
-void 		SCCB_NoACK(void);							// 发送非应答信号
-uint8_t 	SCCB_WaitACK(void);						//	等待应答信号
-uint8_t	SCCB_WriteByte(uint8_t IIC_Data); 	// 写字节函数
-uint8_t 	SCCB_ReadByte(uint8_t ACK_Mode);		// 读字节函数
-		
-uint8_t  SCCB_WriteReg (uint8_t addr,uint8_t value);     	// 对指定的寄存器(8位地址)写一字节数据，OV2640用到
-uint8_t  SCCB_ReadReg (uint8_t addr);                    	// 对指定的寄存器(8位地址)读一字节数据，OV2640用到
-									
-uint8_t 	SCCB_WriteReg_16Bit(uint16_t addr,uint8_t value);	// 对指定的寄存器(16位地址)写一字节数据，OV5640用到									
-uint8_t 	SCCB_ReadReg_16Bit (uint16_t addr);						// 对指定的寄存器(16位地址)读一字节数据，OV5640用到
-uint8_t 	SCCB_WriteBuffer_16Bit(uint16_t addr,uint8_t *pData, uint32_t size);	// 对指定的寄存器(16位地址)批量写数据，OV5640 写入自动对焦固件时用到		
-									
-#endif //__CAMERA_SCCB_H
+uint8_t SCCB_WriteReg_16Bit(uint16_t addr, uint8_t value);
+uint8_t SCCB_ReadReg_16Bit(uint16_t addr);
+uint8_t SCCB_WriteBuffer_16Bit(uint16_t addr, uint8_t *pData, uint32_t size);
+
+#endif
