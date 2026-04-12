@@ -6,3 +6,24 @@ Release/
 *.hex
 *.bin
 *.map
+
+# Keil MDK artifacts
+*.obj
+*.lst
+*.lnp
+*.sct
+*.dep
+*.htm
+*.map
+*.axf
+*.hex
+*.bin
+*.uvguix.*
+*.uvgui.*
+*.scvd
+DebugConfig/
+STM32H750XBH6/
+STM32H750/
+
+# VS Code settings
+.vscode/

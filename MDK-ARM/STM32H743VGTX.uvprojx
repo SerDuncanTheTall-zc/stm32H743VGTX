@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>STM32H750</TargetName>
+      <TargetName>STM32H743VGTX</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>6240000::V6.24::ARMCLANG</pCCUsed>
@@ -48,8 +48,8 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>STM32H750XBH6\</OutputDirectory>
-          <OutputName>STM32H750</OutputName>
+          <OutputDirectory>.\STM32H750XBH6\</OutputDirectory>
+          <OutputName>STM32H743VGTX</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -1165,7 +1165,7 @@
         <package name="CMSIS" schemaVersion="1.7.53" url="https://www.keil.com/pack/" vendor="ARM" version="6.3.0"/>
         <targetInfos>
           <targetInfo name="EXT_Flash_SPI"/>
-          <targetInfo name="STM32H750"/>
+          <targetInfo name="STM32H743VGTX"/>
         </targetInfos>
       </component>
     </components>
