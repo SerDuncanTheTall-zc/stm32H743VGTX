@@ -6,12 +6,13 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.
+  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -569,8 +570,8 @@ HAL_StatusTypeDef     HAL_DCMI_ConfigSyncUnmask(DCMI_HandleTypeDef *hdcmi, DCMI_
  * @{
  */
 /* Peripheral State functions *************************************************/
-HAL_DCMI_StateTypeDef HAL_DCMI_GetState(const DCMI_HandleTypeDef *hdcmi);
-uint32_t              HAL_DCMI_GetError(const DCMI_HandleTypeDef *hdcmi);
+HAL_DCMI_StateTypeDef HAL_DCMI_GetState(DCMI_HandleTypeDef *hdcmi);
+uint32_t              HAL_DCMI_GetError(DCMI_HandleTypeDef *hdcmi);
 /**
   * @}
   */
@@ -580,13 +581,6 @@ uint32_t              HAL_DCMI_GetError(const DCMI_HandleTypeDef *hdcmi);
   */
 
 /* Private types -------------------------------------------------------------*/
-/* Private defines -----------------------------------------------------------*/
-/** @defgroup DCMI_Private_Defines DCMI Private Defines
-  * @{
-  */
-/**
-  * @}
-  */
 /* Private variables ---------------------------------------------------------*/
 /* Private constants ---------------------------------------------------------*/
 /** @defgroup DCMI_Private_Constants DCMI Private Constants
@@ -674,3 +668,4 @@ uint32_t              HAL_DCMI_GetError(const DCMI_HandleTypeDef *hdcmi);
 
 #endif /* STM32H7xx_HAL_DCMI_H */
 
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
