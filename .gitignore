@@ -22,7 +22,7 @@ Release/
 *.uvgui.*
 *.scvd
 DebugConfig/
-STM32H750XBH6/
+STM32H743VGT6/
 STM32H750/
 
 # VS Code settings
