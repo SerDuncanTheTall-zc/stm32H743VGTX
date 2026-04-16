@@ -1,4 +1,4 @@
-﻿/***
+/***
 
 >>>>> 功能说明：
   *
@@ -36,7 +36,7 @@ int main(void)
   SystemClock_Config(); // 配置系统时钟，主频480MHz
   
   LED_Init();         // 初始化LED引脚
-  //FillLight_Init();   /* 初始化 PC4 补光灯并强行关灯 */
+  FillLight_Init();   /* 初始化 PC4 补光灯并强行关灯 */
   USART1_Init();        // USART1初始化 
   
   printf("\r\n\r\n--- System Booting ---\r\n");

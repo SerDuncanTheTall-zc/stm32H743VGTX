@@ -1,4 +1,4 @@
-﻿#include "sccb.h"
+#include "sccb.h"
 
 /**
  * @brief 软件模拟延时

@@ -1,9 +1,9 @@
 ﻿/**
  ****************************************************************************************************
  * @file        bsp_fill_light.h
- * @author      User (Inspired by ALIENTEK)
- * @version     V1.0
- * @brief       OV5640 补光灯驱动代码 (PC4)
+ * @author      User (Modified for PA5)
+ * @version     V1.1
+ * @brief       OV5640 补光灯驱动代码 (PA5)
  ****************************************************************************************************
  */
 
@@ -14,14 +14,14 @@
 
 /*------------------------------------------ 补光灯引脚配置 ----------------------------------*/
 
-#define FILL_LIGHT_GPIO_PORT                GPIOC
-#define FILL_LIGHT_GPIO_PIN                 GPIO_PIN_4
-#define FILL_LIGHT_GPIO_CLK_ENABLE()        do{ __HAL_RCC_GPIOC_CLK_ENABLE(); }while(0)
+#define FILL_LIGHT_GPIO_PORT                GPIOA
+#define FILL_LIGHT_GPIO_PIN                 GPIO_PIN_5
+#define FILL_LIGHT_GPIO_CLK_ENABLE()        do{ __HAL_RCC_GPIOA_CLK_ENABLE(); }while(0)
 
 /*------------------------------------------ 补光灯控制宏 ------------------------------------*/
 
 /**
- * 注意：根据补光灯控制电路原理图 (MOSFET Q1 SI2302)
+ * 注意：根据补光灯控制电路原理图
  * 信号线输出 高电平 (1) -> MOSFET 导通 -> 灯亮
  * 信号线输出 低电平 (0) -> MOSFET 截止 -> 灯灭
  */
