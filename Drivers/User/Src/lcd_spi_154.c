@@ -15,6 +15,7 @@
 
 #include "lcd_spi_154.h"
 
+
 SPI_HandleTypeDef hspi4;	      // SPI_HandleTypeDef 结构体变量
 
 #define  LCD_SPI hspi4           // SPI局部宏，方便修改和移植
