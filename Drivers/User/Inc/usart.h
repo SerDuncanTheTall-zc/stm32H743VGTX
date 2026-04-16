@@ -1,25 +1,25 @@
-#ifndef __USART_H
+ï»¿#ifndef __USART_H
 #define __USART_H
 
 #include "stdio.h"
 
-/*-------------------------------------------- USARTÅäÖÃºê ---------------------------------------*/
+/*-------------------------------------------- USARTé…ç½®å® ---------------------------------------*/
 
 #define  USART1_BaudRate  115200
 
-#define  USART1_TX_PIN									GPIO_PIN_9								// TX Òý½Å
-#define	USART1_TX_PORT									GPIOA										// TX Òý½Å¶Ë¿Ú
-#define 	GPIO_USART1_TX_CLK_ENABLE        	   __HAL_RCC_GPIOA_CLK_ENABLE()	 	// TX Òý½ÅÊ±ÖÓ
+#define  USART1_TX_PIN									GPIO_PIN_9								// TX å¼•è„š
+#define	USART1_TX_PORT									GPIOA										// TX å¼•è„šç«¯å£
+#define 	GPIO_USART1_TX_CLK_ENABLE        	   __HAL_RCC_GPIOA_CLK_ENABLE()	 	// TX å¼•è„šæ—¶é’Ÿ
 
 
-#define  USART1_RX_PIN									GPIO_PIN_10             			// RX Òý½Å
-#define	USART1_RX_PORT									GPIOA                 				// RX Òý½Å¶Ë¿Ú
-#define 	GPIO_USART1_RX_CLK_ENABLE         	   __HAL_RCC_GPIOA_CLK_ENABLE()		// RX Òý½ÅÊ±ÖÓ
+#define  USART1_RX_PIN									GPIO_PIN_10             			// RX å¼•è„š
+#define	USART1_RX_PORT									GPIOA                 				// RX å¼•è„šç«¯å£
+#define 	GPIO_USART1_RX_CLK_ENABLE         	   __HAL_RCC_GPIOA_CLK_ENABLE()		// RX å¼•è„šæ—¶é’Ÿ
 
 
-/*---------------------------------------------- º¯ÊýÉùÃ÷ ---------------------------------------*/
+/*---------------------------------------------- å‡½æ•°å£°æ˜Ž ---------------------------------------*/
 
-void USART1_Init(void) ;	// USART1³õÊ¼»¯º¯Êý
+void USART1_Init(void) ;	// USART1åˆå§‹åŒ–å‡½æ•°
 
 #endif //__USART_H
 
