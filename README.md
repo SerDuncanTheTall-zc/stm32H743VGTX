@@ -49,10 +49,8 @@
 
 后续将陆续迁移并开源以下模块：
 
-- [ ] **driver/ov5640_dcmi**：高性能 DCMI + DMA 图像采集与 LCD 实时渲染。
-- [ ] **rtos/threadx_minimal**：Azure RTOS 在 H7 上的极致性能优化。
-- [ ] **feature/vulkan_logic**：探索高性能图形 API 在嵌入式端的逻辑映射。
-- [ ] **driver/imu_fusion**：基于高速 SPI 的 IMU 数据融合算法。
+- [ ] **master**：高性能 DCMI + DMA 图像采集与 LCD 实时渲染。
+
 
 ---
 
