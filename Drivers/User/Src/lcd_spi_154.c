@@ -775,61 +775,25 @@ void LCD_ShowNumMode(uint8_t mode)
 *						
 *****************************************************************************************************************************************/
 
-void  LCD_DisplayNumber( uint16_t x, uint16_t y, int32_t number, uint8_t len) 
+void LCD_DisplayNumber(uint16_t x, uint16_t y, int32_t number, uint8_t len)
 {  
-	char   Number_Buffer[15];				// 用于存储转换后的字符串
+    char Number_Buffer[16]; // 建议增加到 16，给负号和结束符留足空间
 
-	if( LCD.ShowNum_Mode == Fill_Zero)	// 多余位补0
-	{
-		sprintf( Number_Buffer , "%0.*d",len, number );	// 将 number 转换成字符串，便于显示		
-	}
-	else			// 多余位补空格
-	{	
-		sprintf( Number_Buffer , "%*d",len, number );	// 将 number 转换成字符串，便于显示		
-	}
-	
-	LCD_DisplayString( x, y,(char *)Number_Buffer) ;  // 将转换得到的字符串显示出来
-	
-}
+    if(LCD.ShowNum_Mode == Fill_Zero) // 多余位补0
+    {
+        /* * 1. 去掉 '0'：因为 '.*' (精度) 在处理整数时已经包含了补0的逻辑，GCC 认为写 %0.* 是多余的。
+         * 2. 使用 %ld：因为 number 是 int32_t (long int)，必须用 %ld。
+         * 3. 强制转换：为了保险，把 len 转为 int，number 转为 long。
+         */
+        sprintf(Number_Buffer, "%.*ld", (int)len, (long)number);
+    }
+    else // 多余位补空格
+    {
+        /* 使用 %*ld：* 对应宽度，ld 对应数据 */
+        sprintf(Number_Buffer, "%*ld", (int)len, (long)number);
+    }
 
-/***************************************************************************************************************************************
-*	函 数 名:	LCD_DisplayDecimals
-*
-*	入口参数:	x - 起始水平坐标
-*					y - 起始垂直坐标
-*					decimals - 要显示的数字, double型取值1.7 x 10^（-308）~ 1.7 x 10^（+308），但是能确保准确的有效位数为15~16位
-*
-*       			len - 整个变量的总位数（包括小数点和负号），若实际的总位数超过了指定的总位数，将按实际的总长度位输出，
-*							示例1：小数 -123.123 ，指定 len <=8 的话，则实际照常输出 -123.123
-*							示例2：小数 -123.123 ，指定 len =10 的话，则实际输出   -123.123(负号前面会有两个空格位) 
-*							示例3：小数 -123.123 ，指定 len =10 的话，当调用函数 LCD_ShowNumMode() 设置为填充0模式时，实际输出 -00123.123 
-*
-*					decs - 要保留的小数位数，若小数的实际位数超过了指定的小数位，则按指定的宽度四舍五入输出
-*							 示例：1.12345 ，指定 decs 为4位的话，则输出结果为1.1235
-*
-*	函数功能:	在指定坐标显示指定的变量，包括小数
-*
-*	说    明:	1. 可设置要显示的字体，例如使用 LCD_SetAsciiFont(&ASCII_Font24) 设置为的ASCII字符字体
-*					2.	可设置要显示的颜色，例如使用 LCD_SetColor(0x0000FF) 设置为蓝色
-*					3. 可设置对应的背景色，例如使用 LCD_SetBackColor(0x000000) 设置为黑色的背景色
-*					4. 使用示例 LCD_DisplayDecimals( 10, 10, a, 5, 3) ，在坐标(10,10)显示字变量a,总长度为5位，其中保留3位小数
-*						
-*****************************************************************************************************************************************/
-
-void  LCD_DisplayDecimals( uint16_t x, uint16_t y, double decimals, uint8_t len, uint8_t decs) 
-{  
-	char  Number_Buffer[20];				// 用于存储转换后的字符串
-	
-	if( LCD.ShowNum_Mode == Fill_Zero)	// 多余位填充0模式
-	{
-		sprintf( Number_Buffer , "%0*.*lf",len,decs, decimals );	// 将 number 转换成字符串，便于显示		
-	}
-	else		// 多余位填充空格
-	{
-		sprintf( Number_Buffer , "%*.*lf",len,decs, decimals );	// 将 number 转换成字符串，便于显示		
-	}
-	
-	LCD_DisplayString( x, y,(char *)Number_Buffer) ;	// 将转换得到的字符串显示出来
+    LCD_DisplayString(x, y, (char *)Number_Buffer);
 }
 
 

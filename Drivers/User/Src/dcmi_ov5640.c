@@ -304,7 +304,7 @@ void OV5640_Config(void)
         read_reg = SCCB_ReadReg_16Bit(OV5640_INIT_Config[i][0]);    
         if(OV5640_INIT_Config[i][1] != read_reg )   
         {
-            printf("Config Error at index: %d | Reg: 0x%X | Target: 0x%X | Read: 0x%X\r\n", 
+            printf("Config Error at index: %d | Reg: 0x%X | Target: 0x%X | Read: 0x%X\r\n",
                     i, OV5640_INIT_Config[i][0], OV5640_INIT_Config[i][1], read_reg);
         }
     }
