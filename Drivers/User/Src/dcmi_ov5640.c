@@ -203,7 +203,7 @@ void OV5640_DMA_Transmit_Continuous(uint32_t DMA_Buffer,uint32_t DMA_BufferSize)
 {
    DMA_Handle_dcmi.Init.Mode  = DMA_CIRCULAR;  // 循环模式                  
    HAL_DMA_Init(&DMA_Handle_dcmi);    // 配置DMA
-   printf("[DEBUG] Starting DCMI DMA Continuous Transfer. Buffer: 0x%X\r\n", DMA_Buffer);
+   printf("[DEBUG] Starting DCMI DMA Continuous Transfer. Buffer: 0x%lX\r\n", DMA_Buffer);
    HAL_DCMI_Start_DMA(&hdcmi, DCMI_MODE_CONTINUOUS, (uint32_t)DMA_Buffer,DMA_BufferSize);
 }
 
@@ -292,7 +292,7 @@ void OV5640_Config(void)
 {
     uint32_t i; 
     uint8_t read_reg; 
-    uint8_t temp_val;
+
 
     /* 1. 执行商家提供的标准初始化序列 */
     printf("[System] Starting OV5640 Register Configuration...\r\n");
@@ -304,7 +304,7 @@ void OV5640_Config(void)
         read_reg = SCCB_ReadReg_16Bit(OV5640_INIT_Config[i][0]);    
         if(OV5640_INIT_Config[i][1] != read_reg )   
         {
-            printf("Config Error at index: %d | Reg: 0x%X | Target: 0x%X | Read: 0x%X\r\n",
+            printf("Config Error at index: %lu | Reg: 0x%X | Target: 0x%X | Read: 0x%X\r\n",
                     i, OV5640_INIT_Config[i][0], OV5640_INIT_Config[i][1], read_reg);
         }
     }
@@ -537,7 +537,7 @@ void HAL_DCMI_FrameEventCallback(DCMI_HandleTypeDef *hdcmi)
 void  HAL_DCMI_ErrorCallback(DCMI_HandleTypeDef *hdcmi)
 {
     uint32_t err_code = HAL_DCMI_GetError(hdcmi);
-    printf("!!! DCMI ERROR OCCURRED !!! Error Code: 0x%X\r\n", err_code);
+    printf("!!! DCMI ERROR OCCURRED !!! Error Code: 0x%lX\r\n", err_code);
     
     // 如果是 DMA FIFO 溢出错误 (HAL_DCMI_ERROR_OVR)
     if (err_code == HAL_DCMI_ERROR_OVR)
