@@ -1,12 +1,3 @@
-/***
-
->>>>> 功能说明：
-  *
-  * OV5640采集图像并显示到屏幕
-  *
-  ************************************************************************************************
-***/
-
 #include "main.h"
 #include "led.h"
 #include "usart.h"
@@ -15,17 +6,11 @@
 #include "bsp_fill_light.h"
 #include <stdio.h>
 
-#define Camera_Buffer 0x24000000    // 摄像头图像缓冲区
 uint16_t Camera_Frame_Buffer[Display_Width * Display_Height] __attribute__((section(".camera_section"), aligned(32)));
-/********************************************** 函数声明 *******************************************/
 
 void SystemClock_Config(void);    // 时钟初始化
 void MPU_Config(void);          // MPU配置
 
-/***************************************************************************************************
-* 函 数 名: main
-* 说    明: 主程序
-****************************************************************************************************/
 
 int main(void)
 {
@@ -36,7 +21,7 @@ int main(void)
   SystemClock_Config(); // 配置系统时钟，主频480MHz
   
   LED_Init();         // 初始化LED引脚
-  FillLight_Init();   /* 初始化 PC4 补光灯并强行关灯 */
+  //FillLight_Init();   /* 初始化 PC4 补光灯并强行关灯 */
   USART1_Init();        // USART1初始化 
   
   printf("\r\n\r\n--- System Booting ---\r\n");
@@ -54,7 +39,6 @@ int main(void)
   OV5640_Set_Vertical_Flip( OV5640_Disable );   // 取消垂直翻转
 
   printf("[4] Start DMA Continuous Transfer...\r\n");
-  //OV5640_DMA_Transmit_Continuous(Camera_Buffer, Display_BufferSize);  // 启动DMA连续传输
   OV5640_DMA_Transmit_Continuous((uint32_t)Camera_Frame_Buffer, Display_BufferSize);
   
   printf("--- Init Done. Entering Main Loop ---\r\n");
@@ -62,15 +46,15 @@ int main(void)
   uint32_t last_heartbeat = HAL_GetTick();
   uint32_t frame_count = 0;
 
-  FILL_LIGHT_OFF();
+
+   OV5640_PWDN_OFF;
+  //OV5640_PWDN_ON;
   while (1)
   {
     // --- 1. 心跳侦听：每隔 2 秒打印一次，证明 main 循环没死 ---
     if (HAL_GetTick() - last_heartbeat > 2000) 
     {
         last_heartbeat = HAL_GetTick();
-        //printf("[Heartbeat] main loop running. OV5640_FrameState = %d | Total Frames = %d\r\n", 
-          //      OV5640_FrameState, frame_count);
     }
 
     // --- 2. 图像捕获与显示处理 ---
@@ -78,17 +62,6 @@ int main(void)
     {   
         OV5640_FrameState = 0;    // 清零标志位
         frame_count++;
-        
-        // 打印调试：开始处理这帧图像
-        //printf(" -> Frame %d Captured! Updating LCD...\r\n", frame_count);
-
-        // --- 核心修复：强制刷新 D-Cache ---
-        // 确保 CPU 读到的不是缓存里的老数据，而是 DMA 刚刚写入物理内存的新数据
-        // SCB_InvalidateDCache_by_Addr((uint32_t *)Camera_Buffer, Display_Width * Display_Height * 2);
-
-        // // 将图像数据复制到屏幕
-        // LCD_CopyBuffer(0, 0, Display_Width, Display_Height, (uint16_t *)Camera_Buffer); 
-        /* 强制刷新 Cache */
         SCB_InvalidateDCache_by_Addr((uint32_t *)Camera_Frame_Buffer, Display_Width * Display_Height * 2);
 
         /* 将数组数据复制到屏幕 */
