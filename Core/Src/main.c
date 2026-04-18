@@ -16,7 +16,7 @@
 #include <stdio.h>
 
 #define Camera_Buffer 0x24000000    // 摄像头图像缓冲区
-
+uint16_t Camera_Frame_Buffer[Display_Width * Display_Height] __attribute__((section(".camera_section"), aligned(32)));
 /********************************************** 函数声明 *******************************************/
 
 void SystemClock_Config(void);    // 时钟初始化
@@ -50,12 +50,13 @@ int main(void)
   printf("[3] Download AF Firmware...\r\n");
   OV5640_AF_Download_Firmware();  // 写入自动对焦固件
   OV5640_AF_Trigger_Constant();   // 自动对焦 ，持续触发
-  
+  OV5640_Set_Horizontal_Mirror( OV5640_Enable);
   OV5640_Set_Vertical_Flip( OV5640_Disable );   // 取消垂直翻转
 
   printf("[4] Start DMA Continuous Transfer...\r\n");
-  OV5640_DMA_Transmit_Continuous(Camera_Buffer, Display_BufferSize);  // 启动DMA连续传输
-
+  //OV5640_DMA_Transmit_Continuous(Camera_Buffer, Display_BufferSize);  // 启动DMA连续传输
+  OV5640_DMA_Transmit_Continuous((uint32_t)Camera_Frame_Buffer, Display_BufferSize);
+  
   printf("--- Init Done. Entering Main Loop ---\r\n");
 
   uint32_t last_heartbeat = HAL_GetTick();
@@ -93,10 +94,15 @@ GPIOC->BSRR = (uint32_t)GPIO_PIN_4 << 16U; // 强制 Reset PC4
 
         // --- 核心修复：强制刷新 D-Cache ---
         // 确保 CPU 读到的不是缓存里的老数据，而是 DMA 刚刚写入物理内存的新数据
-        SCB_InvalidateDCache_by_Addr((uint32_t *)Camera_Buffer, Display_Width * Display_Height * 2);
+        // SCB_InvalidateDCache_by_Addr((uint32_t *)Camera_Buffer, Display_Width * Display_Height * 2);
 
-        // 将图像数据复制到屏幕
-        LCD_CopyBuffer(0, 0, Display_Width, Display_Height, (uint16_t *)Camera_Buffer); 
+        // // 将图像数据复制到屏幕
+        // LCD_CopyBuffer(0, 0, Display_Width, Display_Height, (uint16_t *)Camera_Buffer); 
+        /* 强制刷新 Cache */
+        SCB_InvalidateDCache_by_Addr((uint32_t *)Camera_Frame_Buffer, Display_Width * Display_Height * 2);
+
+        /* 将数组数据复制到屏幕 */
+        LCD_CopyBuffer(0, 0, Display_Width, Display_Height, Camera_Frame_Buffer);
         
         // 显示文本
         LCD_DisplayString( 84 ,200,"FPS:");

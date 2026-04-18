@@ -1,103 +1,85 @@
-﻿/***
-
->>>>> 文件说明：
-	*
-	*  初始化usart引脚，配置波特率等参数
-	*
-	************************************************************************************************
-***/
-
+﻿/**
+ ******************************************************************************
+ * @file    usart.c
+ * @author  jojochao
+ * @brief   USART1 初始化及 GCC printf 重定向
+ ******************************************************************************
+ */
 
 #include "usart.h"
-#include "stm32h7xx_hal.h"
 
+UART_HandleTypeDef huart1;
 
-UART_HandleTypeDef huart1;  // UART_HandleTypeDef 结构体变量
-
-
-/*************************************************************************************************
-*	函 数 名:	HAL_UART_MspInit
-*	入口参数:	huart - UART_HandleTypeDef定义的变量，即表示定义的串口
-*	返 回 值:	无
-*	函数功能:	初始化串口引脚
-*	说    明:	无		
-*************************************************************************************************/
-
-
+/**
+  * @brief  串口硬件底层初始化 (MSP)
+  * @param  huart: UART 句柄
+  */
 void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 {
-	GPIO_InitTypeDef GPIO_InitStruct = {0};
-	
-	if(huart->Instance==USART1)
-	{
-		__HAL_RCC_USART1_CLK_ENABLE();		// 开启 USART1 时钟
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+    
+    if(huart->Instance == USART1)
+    {
+        __HAL_RCC_USART1_CLK_ENABLE();      // 开启 USART1 时钟
+        GPIO_USART1_TX_CLK_ENABLE();        // 开启 TX 引脚时钟
+        GPIO_USART1_RX_CLK_ENABLE();        // 开启 RX 引脚时钟
 
-		GPIO_USART1_TX_CLK_ENABLE;				// 开启 USART1 TX 引脚的 GPIO 时钟
-		GPIO_USART1_RX_CLK_ENABLE;				// 开启 USART1 RX 引脚的 GPIO 时钟
+        GPIO_InitStruct.Pin       = USART1_TX_PIN;
+        GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull      = GPIO_PULLUP;
+        GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+        HAL_GPIO_Init(USART1_TX_PORT, &GPIO_InitStruct);
 
-		GPIO_InitStruct.Pin 			= USART1_TX_PIN;					// TX引脚
-		GPIO_InitStruct.Mode 		= GPIO_MODE_AF_PP;				// 复用推挽输出
-		GPIO_InitStruct.Pull 		= GPIO_PULLUP;						// 上拉
-		GPIO_InitStruct.Speed 		= GPIO_SPEED_FREQ_VERY_HIGH;	// 速度等级 
-		GPIO_InitStruct.Alternate 	= GPIO_AF7_USART1;				// 复用为USART1
-		HAL_GPIO_Init(USART1_TX_PORT, &GPIO_InitStruct);
-
-		GPIO_InitStruct.Pin 			= USART1_RX_PIN;					// RX引脚
-		HAL_GPIO_Init(USART1_RX_PORT, &GPIO_InitStruct);		
-	}
-
+        GPIO_InitStruct.Pin       = USART1_RX_PIN;
+        HAL_GPIO_Init(USART1_RX_PORT, &GPIO_InitStruct);        
+    }
 }
 
-/*************************************************************************************************
-*	函 数 名:	USART1_Init
-*	入口参数:	无
-*	返 回 值:	无
-*	函数功能:	初始化串口配置
-*	说    明:	无		 
-*************************************************************************************************/
-
+/**
+  * @brief  USART1 初始化配置
+  */
 void USART1_Init(void)
 {
-  huart1.Instance = USART1;
-  huart1.Init.BaudRate = 115200;
-  huart1.Init.WordLength = UART_WORDLENGTH_8B;
-  huart1.Init.StopBits = UART_STOPBITS_1;
-  huart1.Init.Parity = UART_PARITY_NONE;
-  huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-  huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-  if (HAL_UART_Init(&huart1) != HAL_OK)
-  {
+    huart1.Instance = USART1;
+    huart1.Init.BaudRate = USART1_BaudRate;
+    huart1.Init.WordLength = UART_WORDLENGTH_8B;
+    huart1.Init.StopBits = UART_STOPBITS_1;
+    huart1.Init.Parity = UART_PARITY_NONE;
+    huart1.Init.Mode = UART_MODE_TX_RX;
+    huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+    huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+    huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+    huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+    
+    if (HAL_UART_Init(&huart1) != HAL_OK)
+    {
+        // 这里可以添加错误处理
+    }
 
-  }
-  if (HAL_UARTEx_SetTxFifoThreshold(&huart1, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-
-  }
-  if (HAL_UARTEx_SetRxFifoThreshold(&huart1, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-  {
-
-  }
-  if (HAL_UARTEx_DisableFifoMode(&huart1) != HAL_OK)
-  {
-
-  }
+    /* H7 系列特有的 FIFO 配置，默认关闭以提高调试打印的稳定性 */
+    HAL_UARTEx_DisableFifoMode(&huart1);
 }
 
-/*************************************************************************************************
-*	函 数 名:	fputc
-*	入口参数:	ch - 要输出的字符 ，  f - 文件指针（这里用不到）
-*	返 回 值:	正常时返回字符，出错时返回 EOF（-1）
-*	函数功能:	重定向 fputc 函数，目的是使用 printf 函数
-*	说    明:	无		
-*************************************************************************************************/
-
-int fputc(int ch, FILE *f)
+/**
+  * @brief  重定向 printf 到串口 (GCC 环境专用)
+  * @param  file: 未使用
+  * @param  ptr: 要发送的数据指针
+  * @param  len: 数据长度
+  * @retval 发送的长度
+  */
+int _write(int file, char *ptr, int len)
 {
-	HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 100);	// 发送单字节数据
-	return (ch);
+    /* 使用 HAL 阻塞模式发送，确保调试信息完整输出 */
+    /* HAL_MAX_DELAY 保证不会因为超时导致打印中断 */
+    HAL_UART_Transmit(&huart1, (uint8_t *)ptr, len, HAL_MAX_DELAY);
+    return len;
 }
 
+/* 如果后续需要使用 scanf，可以一并实现 _read */
+int _read(int file, char *ptr, int len)
+{
+    HAL_UART_Receive(&huart1, (uint8_t *)ptr, 1, HAL_MAX_DELAY);
+    return 1;
+}

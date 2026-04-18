@@ -1,29 +1,22 @@
+# 忽略编译输出文件夹
 Debug/
 Release/
+obj/
+
+# 忽略临时文件和中间产物
 *.o
 *.d
+*.su
+*.cyclo
 *.elf
-*.hex
 *.bin
 *.map
+*.list
 
-# Keil MDK artifacts
-*.obj
-*.lst
-*.lnp
-*.sct
-*.dep
-*.htm
-*.map
-*.axf
-*.hex
-*.bin
-*.uvguix.*
-*.uvgui.*
-*.scvd
-DebugConfig/
-STM32H743VGT6/
-STM32H750/
+# 忽略本地调试产生的日志和备份
+*.log
+*~
+*.bak
 
-# VS Code settings
-.vscode/
+# 忽略 IDE 自动生成的某些本地配置（可选，通常建议保留 .settings 的大部分）
+.settings/org.eclipse.cdt.managedbuilder.core.prefs

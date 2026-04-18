@@ -211,7 +211,7 @@ extern	DMA_HandleTypeDef DMA_Handle_dcmi;
   * @param  None
   * @retval None
   */
-void DMA2_Stream7_IRQHandler(void)
+void DMA2_STR7_IRQHandler(void)
 {
   HAL_DMA_IRQHandler(&DMA_Handle_dcmi);
 }
