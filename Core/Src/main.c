@@ -71,6 +71,7 @@ SCCB_WriteReg_16Bit(0x3B00, 0x00);               // 禁用逻辑
 // 这种写法不触碰 GPIO 的配置寄存器，只操作输出寄存器，不会干扰屏幕
 __HAL_RCC_GPIOC_CLK_ENABLE();
 GPIOC->BSRR = (uint32_t)GPIO_PIN_4 << 16U; // 强制 Reset PC4
+  FILL_LIGHT_OFF();
   while (1)
   {
     // --- 1. 心跳侦听：每隔 2 秒打印一次，证明 main 循环没死 ---
