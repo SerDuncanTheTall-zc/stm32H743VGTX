@@ -3,7 +3,7 @@
 This repository contains high-performance embedded projects based on the **STM32H743VGT6** platform (Cortex-M7 @ 480MHz).
 
 To maintain a clean and modular codebase, each feature is developed and maintained in its own dedicated branch. The `master` branch serves as a central navigation hub.
-y1
+
 
 ## 📦 Available Branches
 
