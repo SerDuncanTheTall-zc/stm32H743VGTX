@@ -61,17 +61,7 @@ int main(void)
 
   uint32_t last_heartbeat = HAL_GetTick();
   uint32_t frame_count = 0;
-// 1. 再次通过 SCCB 关掉摄像头的灯信号 (因为固件可能重置了它)
-// 此时已经过了 AF 下载阶段
-uint8_t current_3016 = SCCB_ReadReg_16Bit(0x3016);
-SCCB_WriteReg_16Bit(0x3016, current_3016 & 0xFD); // 灭灯位，保时钟位
-SCCB_WriteReg_16Bit(0x3019, 0x00);               // 设为输入/高阻
-SCCB_WriteReg_16Bit(0x3B00, 0x00);               // 禁用逻辑
 
-// 2. 尝试在不 Init 的情况下，通过寄存器直接拉低 PC4 (防止主控端输出高)
-// 这种写法不触碰 GPIO 的配置寄存器，只操作输出寄存器，不会干扰屏幕
-__HAL_RCC_GPIOC_CLK_ENABLE();
-GPIOC->BSRR = (uint32_t)GPIO_PIN_4 << 16U; // 强制 Reset PC4
   FILL_LIGHT_OFF();
   while (1)
   {
