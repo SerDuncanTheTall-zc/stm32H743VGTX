@@ -312,24 +312,24 @@ void OV5640_Config(void)
     /* 2. 【核心关灯补丁】精准操作寄存器，不伤屏幕 */
     
     // A. 先关闭逻辑触发 (0x3B00)
-    if (SCCB_WriteReg_16Bit(0x3B00, 0x00) == SUCCESS) {
-        printf("[Light] Flash Logic Disabled.\r\n");
-    }
+    // if (SCCB_WriteReg_16Bit(0x3B00, 0x00) == SUCCESS) {
+    //     printf("[Light] Flash Logic Disabled.\r\n");
+    // }
 
-    // B. 精准操作 0x3016 (只灭灯位 Bit 1，强保时钟位 Bit 0)
-    temp_val = SCCB_ReadReg_16Bit(0x3016);
-    // 逻辑：清零 Bit 1 (&0xFD)，置位 Bit 0 (|0x01)
-    if (SCCB_WriteReg_16Bit(0x3016, (temp_val & 0xFD) | 0x01) == SUCCESS) {
-        printf("[Light] Physical Strobe Pin Disabled. PCLK Safe.\r\n");
-    }
+    // // B. 精准操作 0x3016 (只灭灯位 Bit 1，强保时钟位 Bit 0)
+    // temp_val = SCCB_ReadReg_16Bit(0x3016);
+    // // 逻辑：清零 Bit 1 (&0xFD)，置位 Bit 0 (|0x01)
+    // if (SCCB_WriteReg_16Bit(0x3016, (temp_val & 0xFD) | 0x01) == SUCCESS) {
+    //     printf("[Light] Physical Strobe Pin Disabled. PCLK Safe.\r\n");
+    // }
 
-    // C. 最狠的一招：将 STROBE 引脚设为输入/高阻态 (0x3019)
-    // 配合底板上的 10K 下拉电阻，强制让电平归零
-    if (SCCB_WriteReg_16Bit(0x3019, 0x00) == SUCCESS) {
-        printf("[Light] Pin 0x3019 set to Input (High-Z).\r\n");
-    }
+    // // C. 最狠的一招：将 STROBE 引脚设为输入/高阻态 (0x3019)
+    // // 配合底板上的 10K 下拉电阻，强制让电平归零
+    // if (SCCB_WriteReg_16Bit(0x3019, 0x00) == SUCCESS) {
+    //     printf("[Light] Pin 0x3019 set to Input (High-Z).\r\n");
+    // }
 
-    printf("[System] OV5640 Config Completed.\r\n");
+    // printf("[System] OV5640 Config Completed.\r\n");
 }
 
 void OV5640_Set_Pixformat(uint8_t pixformat)
