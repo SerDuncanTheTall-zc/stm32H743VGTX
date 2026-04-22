@@ -43,19 +43,17 @@ int main(void)
   
   printf("--- Init Done. Entering Main Loop ---\r\n");
 
-  uint32_t last_heartbeat = HAL_GetTick();
   uint32_t frame_count = 0;
-
-
-   OV5640_PWDN_OFF;
+  OV5640_PWDN_OFF;
+  LED1_OFF;
   //OV5640_PWDN_ON;
   while (1)
   {
     // --- 1. 心跳侦听：每隔 2 秒打印一次，证明 main 循环没死 ---
-    if (HAL_GetTick() - last_heartbeat > 2000) 
-    {
-        last_heartbeat = HAL_GetTick();
-    }
+    // if (HAL_GetTick() - last_heartbeat > 2000) 
+    // {
+    //     last_heartbeat = HAL_GetTick();
+    // }
 
     // --- 2. 图像捕获与显示处理 ---
     if ( OV5640_FrameState == 1 ) // 采集到了一帧图像
